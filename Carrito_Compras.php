@@ -48,6 +48,27 @@ if (isset($_POST["btnborrar"])) {
       }
     
   }
+
+ 
+
+    
+  
+    if (isset($_POST["btneliminar"])) {
+
+      /////////////////////////////////////////
+      ////////////Method Delete all/////////// 
+      /////////////////////////////////////////
+      $sql = "DELETE FROM carrito";
+    
+      $Delete = mysqli_query($conn, $sql);
+  
+      if ($Delete) {
+        echo "<script> alert( 'Compras Eliminadas' )</script>";
+        
+      }else {
+        echo "<script> alert( 'Error' )</script>";
+      }
+  }
 }catch(Exception $ex){
 
   echo $ex -> getMessage($query) ;
@@ -91,17 +112,7 @@ if (isset($_POST["btnborrar"])) {
                                 <div class="card-body">
                                   <div class="table-responsive-sm">
                                     <table class="table">
-                                      <thead>
-                                        <tr>
-                                          <th scope="col">Imágen</th>
-                                          <th scope="col">Descripción</th>
-                                          <th scope="col">Cantidad</th>
-                                          <th scope="col">Precio unitario</th>
-                                          <th scope="col">Acción</th>
-                                          <th scope="col">Precio Total</th>
-                                        </tr>
-                                      </thead>
-                                      <tbody>
+                                      
                                      
                                       <?php
                                           /////////////////////////////////////////
@@ -119,8 +130,20 @@ if (isset($_POST["btnborrar"])) {
                                               $envio = 2000;
                                               $precio_total = 0;
 
-                                              if (mysqli_num_rows($result) > 0) {
+                                              if (mysqli_num_rows($result) > 0) {?>
+                                                        <thead>
+                                                <tr>
+                                                  <th scope="col">Imágen</th>
+                                                  <th scope="col">Descripción</th>
+                                                  <th scope="col">Cantidad</th>
+                                                  <th scope="col">Precio unitario</th>
+                                                  <th scope="col">Acción</th>
+                                                  <th scope="col">Precio Total</th>
+                                                </tr>
+                                              </thead>
+                                              <tbody>
 
+                                              <?php
                                                 while ($lista_t_carrito = mysqli_fetch_array($result)) {?>
 
                                        <tr class="">  
@@ -174,23 +197,40 @@ if (isset($_POST["btnborrar"])) {
                         $sub_total += $precio_producto;                      
                       }
                       $precio_total = $sub_total + $envio;
+                      echo "<div class='alert alert-primary' role='alert'>Cantidad de productos en el carrito: $num </div>";
+                  
+                      
+                      ?>
+
+                      <form action="Carrito_Compras.php" method="post" enctype=multipart/form-data>
+                                      <button onclick="return confirm('Seguro que deséa elimiar todas las compras')" name="btneliminar" title="Eliminar todo" id="btneliminar" class="btn btn-light" type="submit" >
+                                      <i class="bi bi-trash3-fill"></i> Eliminar todo
+                                      </button>
+                                      </form>
+
+                  <?php
                     }else{
                       echo "<div class='alert alert-primary' role='alert'>No hay producto en el carrito...! </div>";
+                      echo "<div class='alert alert-primary' role='alert'>Cantidad de productos en el carrito: $num </div>";?>
+                  
+                                <form action="index.php" method="post" enctype=multipart/form-data>
+                                  <button href="" name="comprar" title="Eliminar todo" id="comprar" class="btn btn-light" type="submit" >
+                                      <i class="bi bi-bag"></i> Comprar
+                                      </button>
+                                      </form>
+            
+
+                      <?php
                     }
                       $conn -> close();
                   } catch (Exception $ex) {
                     echo $ex -> getMessage();
                   }
-                  echo "<div class='alert alert-primary' role='alert'>Cantidad de productos en el carrito: $num </div>";
                   
                 
                     
                   ?>
-                                      <form action="Carrito_Compras.php?EliminarId=<?php echo $lista_t_carrito ['id_carrito'] ?>" method="post" enctype=multipart/form-data>
-                                      <button onclick="return confirm('Seguro que deséa elimiar todas las compras')" name="btneliminar" title="Eliminar todo" id="btneliminar" class="btn btn-light" type="submit" >
-                                      <i class="bi bi-trash3-fill"></i> Eliminar todo
-                                      </button>
-                                      </form>
+                                      
                                     </tbody>
                                   </table>
                                 </div>
