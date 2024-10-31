@@ -50,7 +50,7 @@ if (isset($_POST["btnborrar"])) {
   }
 }catch(Exception $ex){
 
-  echo $ex -> getMessage($query);
+  echo $ex -> getMessage($query) ;
 }
 
 ?>
