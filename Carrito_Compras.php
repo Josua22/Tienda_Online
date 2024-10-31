@@ -86,8 +86,8 @@ if (isset($_POST["btnborrar"])) {
             <div class="row">
 
               <div class="col-lg-7">
-                <h5 class="mb-3"><a href="#!" class="text-body"><i
-                      class="fas fa-long-arrow-alt-left me-2"></i>Continue shopping</a></h5>
+                <h5 class="mb-3"><a href="index.php" class="text-body"><i
+                      class="fas fa-long-arrow-alt-left me-2"></i><- Continuar Comprando</a></h5>
                 <hr>
 
                 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -214,7 +214,7 @@ if (isset($_POST["btnborrar"])) {
                       echo "<div class='alert alert-primary' role='alert'>Cantidad de productos en el carrito: $num </div>";?>
                   
                                 <form action="index.php" method="post" enctype=multipart/form-data>
-                                  <button href="" name="comprar" title="Eliminar todo" id="comprar" class="btn btn-light" type="submit" >
+                                  <button href="" name="comprar" title="Comprar" id="comprar" class="btn btn-light" type="submit" >
                                       <i class="bi bi-bag"></i> Comprar
                                       </button>
                                       </form>
@@ -227,8 +227,6 @@ if (isset($_POST["btnborrar"])) {
                     echo $ex -> getMessage();
                   }
                   
-                
-                    
                   ?>
                                       
                                     </tbody>
