@@ -22,6 +22,8 @@
 <!-- Link de iconos bootstrap -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 	
+  <!-- Initialize the JS-SDK -->
+  <script src="https://sandbox.paypal.com/sdk/js?client-id=AUCiLWtdhc9DujhCuhG4u2XaAjQGJk0AidIS-MxeFr9oFf6-6vvUB1H5DrgEnWIIFVRleCpjlqShjFri&currency=USD&components=buttons"></script>
 
 </head>
 
