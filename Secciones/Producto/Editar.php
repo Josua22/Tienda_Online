@@ -3,7 +3,7 @@
 <?php 
 		try {
 
-			require("../../DataBase.php");
+			include("../../DataBase.php");
 
 				if (isset($_POST["submit"])) {
 

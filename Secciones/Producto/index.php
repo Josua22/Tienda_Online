@@ -85,7 +85,7 @@
 								
 									<tr class="">
 										<td scope="row"><?php echo $lista_t_producto ['id_producto'] ?></td>
-										<td><img src="../../Imagenes/<?php echo $lista_t_producto ['imagen'] ?>"/></td>
+										<td scope="row"><img src="../../Imagenes/<?php echo $lista_t_producto ['imagen'] ?>"/></td>
 										<td scope="row"><?php echo $lista_t_producto ['desc_producto'] ?></td>
 										<td scope="row"><?php echo $lista_t_producto ['precio'] ?></td>
 										<td>

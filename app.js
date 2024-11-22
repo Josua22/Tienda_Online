@@ -105,6 +105,3 @@ window.paypal
         } ,
     })
     .render("#paypal-button-container"); 
-
-Expand
-

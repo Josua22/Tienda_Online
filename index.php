@@ -7,43 +7,25 @@ try {
 
     include("DataBase.php");
 
-        if (isset($_POST["submit"])) {
-            
-            $imagen = $_POST['imagen'];
-            $descripcion = $_POST["descripcion"];
-            $cantidad = $_POST["cantidad"];
-            $precio = $_POST["precio"];
+    if (isset($_REQUEST["btnAgregar"])){
+      
+      $descripcion = $_REQUEST['descripcion'];
+      $cantidad = $_REQUEST['cantidad'];
+      $precio = $_REQUEST['precio'];
 
-            //Validacion de carrito, no se puede repetir producto
-            $sql_cart = "SELECT * from carrito WHERE desc_carrito = '$descripcion'";
-            $query_carrito = mysqli_query($conn, $sql_cart);
+      $_SESSION["carrito"][$descripcion]["cantidad"] = $cantidad;
+      $_SESSION["carrito"][$descripcion]["precio"] = $precio;
 
-            if(mysqli_num_rows($query_carrito) > 0){
-              echo "<div class='alert alert-primary' role='alert'>Producto ya fué agregadó al carrito...! </div>";
-            }else{
-              //insertar en tabla carrito
-              $sql = "INSERT INTO carrito VALUES ( null , '$imagen', '$descripcion','$cantidad', '$precio' )";
+      echo "<div class='alert alert-primary' role='alert'>Producto agregadó al carrito...!</div>";
+  
+    } 
 
-              $query = mysqli_query($conn, $sql);
+    print_r($_SESSION);
 
-              if ($query) {
-                  echo "<script> alert( 'Archivo Agregado' )</script>";
-                  header("location:index.php");
-                  exit();
-              }else {
-                  echo "<script> alert( 'Error' )</script>";
-              }
-            }
-
-            
-
-        }
-
+        
 } catch (Exception $ex) {
     echo $ex -> getMessage($sql);
 }
-
-
 ?>
 
   <div class="album py-5 bg-light">
@@ -82,17 +64,19 @@ try {
                         <div class="btn-group">
 
                         <form action="index.php" class="needs-validation" method="post" enctype=multipart/form-data novalidate>
-                          <button type="button" class="btn btn-sm btn-outline-secondary">Agregar al carrito</button>
+                        
+                          <input type="hidden" id="id" name="id" value="<?php echo $lista_t_producto ['id_producto'] ?>">
+                          <input type="hidden" id="imagen" name="imagen" value="<?php echo $lista_t_producto ['imagen'] ?>">
+                          <input type="hidden" id="descripcion" name="descripcion" value="<?php echo $lista_t_producto ['desc_producto'] ?>">
+                          <input type="hidden" id="cantidad" name="cantidad" value="1" min="1">
+                          <input type="hidden" id="precio" name="precio" value="<?php echo $lista_t_producto ['precio'] ?>">
+
+                          <button type="button" name="btnAgregar" id="btnAgregar"class="btn btn-sm btn-outline-secondary">Agregar al carrito</button>
+                          <input name="buscar" id="buscar" class="btn btn-dark" type="number" min="1" value = "1">
                         </form>
-                          <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+                         
                         </div>
                         <small class="text-muted">Precio: <?php echo $lista_t_producto ['precio'] ?> cólones.</small>
-
-                        
-                        <input type="hidden" id="imagen" name="imagen" value="<?php echo $lista_t_producto ['imagen'] ?>">
-                        <input type="hidden" id="descripcion" name="descripcion" value="<?php echo $lista_t_producto ['desc_producto'] ?>">
-                        <input type="hidden" id="cantidad" name="cantidad" value="1">
-                        <input type="hidden" id="precio" name="precio" value="<?php echo $lista_t_producto ['precio'] ?>">
 
                       </div>
                     </div>
@@ -130,20 +114,21 @@ try {
 
                     <div class="card-body">
                       <p class="card-text"><?php echo $lista_t_producto ['desc_producto'] ?></p>
-                      <small class="text-muted" >Precio: <?php echo $lista_t_producto ['precio'] ?> cólones.</small>
+                      <small class="text-muted" >Precio: <?php echo $lista_t_producto ['precio'] ?> cólones.</small><br>
+
+                      
 
                       <div class="d-flex justify-content-between align-items-center">
                         <div class="btn-group">
-                        <form action="index.php" class="needs-validation" method="post" enctype=multipart/form-data novalidate>
-                          <button type="submit" name="submit" class="btn btn-sm btn-outline-secondary">Agregar</button>
-                        </form>
-                          <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
-                        </div>
+                          <small class="text-muted" >Catidad: <input type="number" id="cantidad" name="cantidad" class="btn btn-sm btn-outline-secondary" value="1" min="1"></small>
+                          <button type="submit" name="btnAgregar" id="btnAgregar" class="btn btn-sm btn-outline-secondary">Agregar</button>
+                         </div>
                         
+                        
+                        <input type="hidden" id="id" name="id" value="<?php echo $lista_t_producto ['id_producto'] ?>">
                         <input type="hidden" id="imagen" name="imagen" value="<?php echo $lista_t_producto ['imagen'] ?>">
                         <input type="hidden" id="descripcion" name="descripcion" value="<?php echo $lista_t_producto ['desc_producto'] ?>">
-                        <input type="hidden" id="cantidad" name="cantidad" value="1">
-                        <input type="hidden" id="precio" name="precio" value="<?php echo $lista_t_producto ['precio'] ?>">
+                        <input type="hidden" title="Cantidad" id="precio" name="precio" value="<?php echo $lista_t_producto ['precio'] ?>">
                         
                       </div>
                     </div>
@@ -158,7 +143,6 @@ try {
               }else{
                 echo "<div class='alert alert-primary' role='alert'>CNo se encontraron ítems para mostrar </div>";
               }
-
       
 
       $conn -> close();
@@ -187,6 +171,8 @@ try {
       </div>
     </div>
   </section>
+
+
 
 </main>
 

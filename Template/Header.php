@@ -25,30 +25,34 @@
   <!-- Initialize the JS-SDK -->
   <script src="https://sandbox.paypal.com/sdk/js?client-id=AUCiLWtdhc9DujhCuhG4u2XaAjQGJk0AidIS-MxeFr9oFf6-6vvUB1H5DrgEnWIIFVRleCpjlqShjFri&currency=USD&components=buttons"></script>
 
+  <!-- Paypal JS-SDK -->
+  <script src="app.js"></script>
+
 </head>
 
 <body>
   <header>
 
-  <?php
-        $servidor = "localhost"; // 127.0.0.1
-        $DataBase = "matcha_db";
-        $User = "root";
-        $Pass = "";
+<?php
 
-        $conn_header = mysqli_connect("$servidor","$User","$Pass","$DataBase");
+  try {
 
+    session_start();
+    $cont = 0;
 
-        $sql_contador = "SELECT * from carrito";
-        $query_contador = mysqli_query($conn_header, $sql_contador);
-        $cont = 0;
+    if (isset($_SESSION['carrito'])) {
 
-        if(mysqli_num_rows($query_contador) > 0){
-          
-          while ($lista_t_carrito = mysqli_fetch_array($query_contador)) {
-           $cont++;
-          }
-        }
+      foreach($_SESSION["carrito"] as $indice => $arreglo){
+
+        $cont++;
+      }
+                                                
+    }
+
+  } catch (Exception $tex) {
+    echo $ex -> getMessage();
+  }
+      
         ?>
 
 	<!-- place navbar here -->

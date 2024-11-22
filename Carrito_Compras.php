@@ -1,74 +1,27 @@
-<?php include("Template/Header.php"); ?>
+<?php include("Template/Header.php") ?>
 
 <?php
 
 try{
-
-  
-include("DataBase.php");
-
-if (isset($_POST["btnborrar"])) {
-
-  /////////////////////////////////////////
-  ////////////Method Delete into/////////// 
-  ////////////the method filter////////////
-  /////////////////////////////////////////
-
-  if (isset($_GET["EliminarId"])) {
-  
-  $id = $_GET["EliminarId"];
     
-  $sql = "DELETE FROM carrito WHERE id_carrito = $id";
+  include("DataBase.php");
 
-  $Delete = mysqli_query($conn, $sql);
-
-  if ($Delete) {
-    echo "<script> alert( 'Archivo Eleminado' )</script>";
-    
-  }else {
-    echo "<script> alert( 'Error' )</script>";
-  }
-}
-}
-
-  if(isset($_POST["btneditar"])){
-
-      $id = $_POST["id"];
-      $Cantidad = $_POST["cantidad"];
-
-      $sql = "UPDATE carrito set Cantidad_carrito = '$Cantidad'
-      where id_carrito = '$id'";
-
-      $query = mysqli_query($conn, $sql);
-
-      if ($query) {
-        echo "<script> alert( Archivo Agregado )</script>";
-      }else {
-        echo "<script> alert( Error )</script>";
-      }
-    
+  //drop all entire shopping car
+  if(isset($_REQUEST['vaciar'])){
+    session_destroy();
+    header("location:Carrito_Compras.php");
+								exit();
   }
 
- 
+  //delete just one item
+  if(isset($_REQUEST['item'])){
 
-    
-  
-    if (isset($_POST["btneliminar"])) {
-
-      /////////////////////////////////////////
-      ////////////Method Delete all/////////// 
-      /////////////////////////////////////////
-      $sql = "DELETE FROM carrito";
-    
-      $Delete = mysqli_query($conn, $sql);
-  
-      if ($Delete) {
-        echo "<script> alert( 'Compras Eliminadas' )</script>";
-        
-      }else {
-        echo "<script> alert( 'Error' )</script>";
-      }
+    $producto = $_REQUEST['item'];
+    unset($_SESSION['carrito'][$producto]);
+    header("location:Carrito_Compras.php");
+								exit();
   }
+
 }catch(Exception $ex){
 
   echo $ex -> getMessage($query) ;
@@ -92,8 +45,8 @@ if (isset($_POST["btnborrar"])) {
 
                 <div class="d-flex justify-content-between align-items-center mb-4">
                   <div>
-                    <p class="mb-1">Shopping cart</p>
-                    <p class="mb-0">You have  items in your cart</p>
+                    <p class="mb-1">Carrito de Comprás</p>
+                    <p class="mb-0">Items agregado a la comprás</p>
                   </div>
                   <div>
                     <p class="mb-0"><span class="text-muted">Sort by:</span> <a href="#!"
@@ -101,9 +54,9 @@ if (isset($_POST["btnborrar"])) {
                   </div>
                 </div>      
                         <div class="card mb-3 mb-lg-0">
-                          <div class="card-body">
+                          <!-- <div class="card-body">
                             <div class="d-flex justify-content-between">
-                              <div class="d-flex flex-row align-items-center">
+                              <div class="d-flex flex-row align-items-center"> -->
                                 <div class="card-body">
                                   <div class="table-responsive-sm">
                                   <table class="table">     
@@ -117,222 +70,126 @@ if (isset($_POST["btnborrar"])) {
                                           try{
 
                                             include("DataBase.php");
-                                              $query = "SELECT * From carrito";
-                                              $result = mysqli_query($conn, $query);
+                                           
                                               $num = 0;
                                               $precio_producto = 0;
                                               $sub_total = 0;
                                               $envio = 2000;
                                               $precio_total = 0;
+                                              $precio_final = 0.0;
 
-                                              if (mysqli_num_rows($result) > 0) {?>
-                                        
-                                                        <thead>
-                                                <tr>
-                                                  <th scope="col">Imágen</th>
-                                                  <th scope="col">Descripción</th>
-                                                  <th scope="col">Cantidad</th>
-                                                  <th scope="col">Precio unitario</th>
-                                                  <th scope="col">Acción</th>
-                                                  <th scope="col">Precio Total</th>
-                                                </tr>
-                                              </thead>
-                                              <tbody>
+                                              if(isset($_SESSION["carrito"])){
+                                                ?>
+                                                <thead>
+                                                  <tr>
+                                                    <th scope="col">Descripción</th>
+                                                    <th scope="col">Cantidad</th>
+                                                    <th scope="col">Precio Unitario</th>
+                                                    <th scope="col">Precio Total</th>
+                                                    <th scope="col">Acción</th>
+                                                  </tr>
+                                                </thead>
+                                                <tbody>
+                                                <?php
+                                                foreach($_SESSION["carrito"] as $indice => $arreglo){
+                                                  
+                                                  $precio_producto = $arreglo["precio"] * $arreglo["cantidad"];
+                                                    
+                                                  $sub_total += $precio_producto;
 
-                                              <?php
-                                                while ($lista_t_carrito = mysqli_fetch_array($result)) {?>
+                                                  ?>
+                                                  
+                                                  <tr class="col-6">  
+                                                  
+                                                    <td scope="row">
+                                                      <div style="width: 80px;">
+                                                        <h5 class="mb-0" ><?php echo $indice?></h5>
+                                                      </div>
+                                                    </td>
+                                                  <?php
+                                                    foreach($arreglo as $key => $value){?>
 
-                                       <tr class="">  
-                                        <td>
-                                          <div>
-                                            <img
-                                              src="Imagenes/<?php echo $lista_t_carrito["imagen_carrito"]?>"
-                                              class="img-fluid rounded-3" alt="Shopping item" style="width: 65px;">
-                                          </div>
-                                        </td>
-                                        <td scope="row">
-                                            <div class="ms-3">
-                                              <h5><?php echo $lista_t_carrito["desc_carrito"] ?></h5>
-                                            </div>
-                                        </td>
-                                        <td scope="row">
-                                          <div >
-                                          <form action="Carrito_Compras.php" method="post" enctype=multipart/form-data>
-                                          <input type="hidden" id="id" name="id" style="width: 50px;" value="<?php echo $lista_t_carrito["id_carrito"] ?>">
-                                            <input type="number" id="cantidad" name="cantidad" style="width: 40px" min="1" value="<?php echo $lista_t_carrito['Cantidad_carrito'] ?>">
-                                            <button onclick="return confirm('Seguro que deséa cambiar la cantidad')" name="btneditar" title="Refrescar" id="btneditar" class="btn btn-light" type="submit" >
-                                              <a href="#" ><i class="bi bi-arrow-clockwise"></i></a>
-                                            </button>
-                                          </form>
-                                             </div>
-                                        </td>
-                                        <td scope="row">
-                                          <div style="width: 80px;">
-                                            <h5 class="mb-0">¢<?php echo $lista_t_carrito["precio_carrito"]?></h5>
-                                          </div>
-                                        </td>
-                                        <td scope="row">
-                                          <form action="Carrito_Compras.php?EliminarId=<?php echo $lista_t_carrito ['id_carrito'] ?>" method="post" enctype=multipart/form-data>
-                                            <button onclick="return confirm('Seguro que deséa elimiar la información')" name="btnborrar" title="Eliminar" id="btnborrar" class="btn btn-light" type="submit" >
-                                              <a href="#" ><i class="bi bi-trash3-fill"></i></a>
-                                            </button>
-                                                </form>
-                                          </td>
+                                                          <td scope="row">
+                                                            <div style="width: 80px;">
+                                                              <h5 class="mb-0"><?php echo $value?></h5>
+                                                            </div>
+                                                          </td>
+                                                    <?php
+                                                  }
+                                                  $num++;?>
+                                                  <td scope="row">
+                                                      <div style="width: 80px;">
+                                                        <h5 class="mb-0" ><?php echo $precio_producto?></h5>
+                                                      </div>
+                                                    </td>
+                                                    <td scope="row">
+                                                      <div style="width: 80px;">
+                                                      <form action="Carrito_Compras.php?item=<?php echo $indice?>" method="post" enctype=multipart/form-data>
+                                                        <button onclick="return confirm('Seguro que deséa eliminar el ítem?')" name="Eliminar_item" title="Eliminar_item" id="Eliminar_item" class="btn btn-light" type="submit" >
+                                                          <i class="bi bi-trash-fill"></i> Eliminar
+                                                        </button>
+                                                      </form> 
+                                                      </div>
+                                                    </td>
+                                                  </tr>
+                                                  <?php
+                                                  
+                                                }?>
 
-                                          <?php 
-                                              $precio_producto = $lista_t_carrito["precio_carrito"] * $lista_t_carrito["Cantidad_carrito"] ; ?>
-
-                                          <td scope="row">
-                                          <div style="width: 80px;">
-                                            <h5 class="mb-0">¢<?php echo $precio_producto?></h5>
-                                          </div>
-                                          </td>
-                                       </tr>
-                                          <?php
-                                          
-                        $num++;
-                        $sub_total += $precio_producto;   
-
-                      }
-                      $precio_total = $sub_total + $envio;
-                      echo "<div class='alert alert-primary' role='alert'>Cantidad de productos en el carrito: $num </div>";
-                  
-                      ?>
-
-                                    <tr class="">
-                                        <td scope="row">
-                                          <div style="width: 80px;">
-                                            <div class="alert alert-success" role="alert">
-                                              <p class="mb-1">Total: <?php echo $precio_total?></p>
-                                            </div>
-                                          </div>
-                                          </td>
-                                    </tr>
-
-                                      <tr class="">  
-                                        <td scope="row">
-                                          
-                                          </td>
-
-                                          <td scope="row">
-                                          <div style="width: 80px;">
+                                                </tbody> 
+                                                <form action="Carrito_Compras.php?vaciar=true" method="post" enctype=multipart/form-data>
+                                                  <button name="vaciar_carrito" title="vaciar" id="vaciar_carrito" class="btn btn-light" type="submit" >
+                                                    <i class="bi bi-bag"></i> Vaciar
+                                                  </button>
+                                                </form> 
+                                                <?php
+                                                      
+                                              }else{
+                                                      echo "<div class='alert alert-primary' role='alert'>No hay producto en el carrito...! </div>";
+                                              }
+                                              
+                                              echo "<div class='alert alert-primary' role='alert'>Cantidad de productos en el carrito: $num </div>";
+                                             
+                                            }catch (Exception $ex) {
+                                              echo $ex -> getMessage();
+                                            }
+                                            ?>
                                             
-                                          </div>
-                                          </td>
-                                         </tr>
-                                    </tbody>
-                      
-                                    <div style="width: 80px;">
-                                            <form action="Carrito_Compras.php" method="post" enctype=multipart/form-data>
-                                            <button onclick="return confirm('Seguro que deséa elimiar todas las compras')" name="btneliminar" title="Eliminar todo" id="btneliminar" class="btn btn-light" type="submit" >
-                                            <i class="bi bi-trash3-fill"></i> Eliminar todo
-                                            </button>
-                                            </form>
-                                          </div>
-
-                      
-
-                          <div>
-                         
-                            <p class="mb-0">Forma de entrega</p>
-                            <div class="form-check form-check-inline">
-                              <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                              <label class="form-check-label" for="inlineCheckbox1">Correos</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                              <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
-                              <label class="form-check-label" for="inlineCheckbox2">Mensajeria solo GAM</label>
-                            </div>
-                            
+                                            <form action="index.php" method="post" enctype=multipart/form-data>
+                                              <button href="" name="comprar" title="Comprar" id="comprar" class="btn btn-light" type="submit" >
+                                                <i class="bi bi-bag"></i> Comprar
+                                              </button>
+                                            </form>  
+                                    </table>
+                                    <div class='alert alert-primary' role='alert'>Precio total: <?php echo $sub_total ?></div>
+                                    </div>
+                              </div>
+                            <!-- </div>
                           </div>
-
-                  <?php
-                    }else{
-
-                      
-                      echo "<div class='alert alert-primary' role='alert'>No hay producto en el carrito...! </div>";
-                      echo "<div class='alert alert-primary' role='alert'>Cantidad de productos en el carrito: $num </div>";?>
-                  
-                                <form action="index.php" method="post" enctype=multipart/form-data>
-                                  <button href="" name="comprar" title="Comprar" id="comprar" class="btn btn-light" type="submit" >
-                                      <i class="bi bi-bag"></i> Comprar
-                                      </button>
-                                      </form>
-            
-                                      
-                      <?php
-                    }
-                      $conn -> close();
-                  } catch (Exception $ex) {
-                    echo $ex -> getMessage();
-                  }
-                  
-                  ?>
-
-                  
-</table>
-                                      
-                                    
-                                </div>
+                            
+                        </div> -->
                       </div>
                     </div>
-                             
-                            </div>
-                          </div>
-                        </div>
                         
 
-              </div>
               <div class="col-lg-5">
 
-                <div class="card bg-secundary text-white rounded-3">
+                <div class="card bg-secondary text-white rounded-3">
                   <div class="card-body">
-                    
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                      <h5 class="mb-0">Card details</h5>
+                    </div>
 
-                  <div id="paypal-button-container"></div>
-                    <p id="result-message"></p>
+                    <form class="mt-4">
 
-                    <script>
-                                            
-                      paypal.Buttons({
-                        style: {
-                          layout: 'vertical',
-                          color:  'gold',
-                          shape:  'rect',
-                          label:  'paypal'
-                        },
+                      <div id="paypal-button-container"></div>
+                      
+                    </form>
 
-
-                        createOrder: function(data, actions){
-                          return actions.order.create({
-                            purchase_units: [{
-                              amount: {
-                                value: <?php echo $precio_total?>
-                              }
-                            }]
-                          })
-                        },
-
-                        onApprove: function(data, actions){
-                          actions.order.capture().then.(function (detalles)){
-                            
-                          }
-                        },
-
-                      onCancel: function(data){
-                        alert("Pago Canceladó...!")
-                        console.log(data);
-                      }
-
-                      }).render('#paypal-button-container');
-
-                    </script>
-                    
                   </div>
                 </div>
 
               </div>
-
               
 
             </div>
